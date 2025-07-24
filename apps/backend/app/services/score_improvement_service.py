@@ -58,9 +58,57 @@ class ScoreImprovementService:
         processed_resume = result.scalars().first()
 
         if not processed_resume:
-            ResumeParsingError(resume_id=resume_id)
+            # Try to create a minimal processed resume for basic functionality
+            processed_resume = await self._create_minimal_processed_resume(resume_id, resume.content)
+            if not processed_resume:
+                raise ResumeParsingError(resume_id=resume_id)
 
         return resume, processed_resume
+
+    async def _create_minimal_processed_resume(self, resume_id: str, content: str):
+        """
+        Creates a minimal processed resume with basic keyword extraction if LLM processing failed
+        """
+        try:
+            # Import inside function to avoid circular imports
+            from app.models import ProcessedResume
+            import json
+
+            # Basic keyword extraction - just use common tech terms found in content
+            common_keywords = [
+                "Python", "Java", "JavaScript", "SQL", "React", "Node.js", "AWS", "Docker",
+                "Kubernetes", "Git", "HTML", "CSS", "MongoDB", "PostgreSQL", "MySQL",
+                "Machine Learning", "Data Analysis", "Project Management", "Agile", "Scrum"
+            ]
+            
+            # Find keywords that appear in the resume content (case insensitive)
+            found_keywords = [kw for kw in common_keywords if kw.lower() in content.lower()]
+            
+            # If no keywords found, use generic ones
+            if not found_keywords:
+                found_keywords = ["General Skills", "Experience", "Education"]
+
+            minimal_processed = ProcessedResume(
+                resume_id=resume_id,
+                personal_data=json.dumps({"name": "Candidate", "email": "candidate@email.com"}),
+                experiences=json.dumps({"experiences": []}),
+                projects=json.dumps({"projects": []}),
+                skills=json.dumps({"skills": found_keywords}),
+                research_work=json.dumps({"research_work": []}),
+                achievements=json.dumps({"achievements": []}),
+                education=json.dumps({"education": []}),
+                extracted_keywords=json.dumps({"extracted_keywords": found_keywords})
+            )
+
+            self.db.add(minimal_processed)
+            await self.db.commit()
+            
+            logger.info(f"Created minimal processed resume for {resume_id} with keywords: {found_keywords}")
+            return minimal_processed
+
+        except Exception as e:
+            logger.error(f"Failed to create minimal processed resume: {e}")
+            return None
 
     async def _get_job(self, job_id: str) -> Tuple[Job | None, ProcessedJob | None]:
         """
@@ -78,7 +126,7 @@ class ScoreImprovementService:
         processed_job = result.scalars().first()
 
         if not processed_job:
-            JobParsingError(job_id=job_id)
+            raise JobParsingError(job_id=job_id)
 
         return job, processed_job
 

@@ -5,6 +5,7 @@ from .exceptions import ProviderError
 from .strategies.wrapper import JSONWrapper, MDWrapper
 from .providers.ollama import OllamaProvider, OllamaEmbeddingProvider
 from .providers.openai import OpenAIProvider, OpenAIEmbeddingProvider
+from ..core.config import settings
 
 
 class AgentManager:
@@ -24,12 +25,13 @@ class AgentManager:
             return OpenAIProvider(api_key=api_key)
 
         model = kwargs.get("model", self.model)
-        installed_ollama_models = await OllamaProvider.get_installed_models()
+        ollama_host = settings.OLLAMA_BASE_URL
+        installed_ollama_models = await OllamaProvider.get_installed_models(host=ollama_host)
         if model not in installed_ollama_models:
             raise ProviderError(
                 f"Ollama Model '{model}' is not found. Run `ollama pull {model} or pick from any available models {installed_ollama_models}"
             )
-        return OllamaProvider(model_name=model)
+        return OllamaProvider(model_name=model, host=ollama_host)
 
     async def run(self, prompt: str, **kwargs: Any) -> Dict[str, Any]:
         """
@@ -50,12 +52,13 @@ class EmbeddingManager:
         if api_key:
             return OpenAIEmbeddingProvider(api_key=api_key)
         model = kwargs.get("embedding_model", self._model)
-        installed_ollama_models = await OllamaProvider.get_installed_models()
+        ollama_host = settings.OLLAMA_BASE_URL
+        installed_ollama_models = await OllamaProvider.get_installed_models(host=ollama_host)
         if model not in installed_ollama_models:
             raise ProviderError(
                 f"Ollama Model '{model}' is not found. Run `ollama pull {model} or pick from any available models {installed_ollama_models}"
             )
-        return OllamaEmbeddingProvider(embedding_model=model)
+        return OllamaEmbeddingProvider(embedding_model=model, host=ollama_host)
 
     async def embed(self, text: str, **kwargs: Any) -> list[float]:
         """

@@ -69,6 +69,29 @@ If you have any suggestions or feature requests, please feel free to open an iss
 
 ![Installation](assets/how_to_install_resumematcher.png)
 
+### 🚀 Quick Start (Automated Installation)
+
+**For Windows users**, we've created automated scripts that handle everything:
+
+```bash
+# One-click installation and setup
+python start.py
+
+# When you're done working
+python stop.py
+```
+
+These scripts will automatically:
+- ✅ Install Docker Desktop
+- ✅ Install Ollama + required models
+- ✅ Build and start all containers
+- ✅ Verify everything is working
+- ✅ Open Resume Matcher at http://localhost:3000
+
+### 📋 Manual Installation
+
+For advanced users or other operating systems:
+
 Follow the instructions in the [SETUP.md](SETUP.md) file to set up the project locally. The setup script will install all the necessary dependencies and configure your environment.
 
 The project is built using:

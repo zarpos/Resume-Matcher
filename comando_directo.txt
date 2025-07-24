@@ -1,0 +1,14 @@
+while ($true) { 
+    $timestamp = Get-Date -Format "HH:mm:ss"
+    Clear-Host
+    Write-Host "=== OLLAMA MONITOR - $timestamp ===" -ForegroundColor Green
+    ollama ps
+    Write-Host "`n=== LOGS RECIENTES ===" -ForegroundColor Yellow
+    docker logs --tail 5 resume-matcher-app | Select-String "ollama|processing|generate|response|ERROR" | Select-Object -Last 3
+    
+    # Guardar en archivo
+    $content = "[$timestamp] " + (ollama ps | Out-String) + "`n" + (docker logs --tail 10 resume-matcher-app | Out-String)
+    $content | Out-File -FilePath "ollama_monitor.txt" -Encoding UTF8
+    
+    Start-Sleep -Seconds 3 
+}

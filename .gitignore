@@ -30,9 +30,12 @@ share/python-wheels/
 MANIFEST
 uv.lock
 
-# SQLite databases
+# SQLite databases - DATOS SENSIBLES
 *.sqlite3
 *.db
+*.sqlite
+database.db
+resume_matcher.db
 
 # Test artifacts
 .pytest_cache/
@@ -43,6 +46,51 @@ htmlcov/
 # Local instance or config files specific to backend
 instance/
 .env # Backend specific environment variables
+.env.local
+.env.development
+.env.test
+.env.production
+
+# DATOS SENSIBLES - Resume Matcher específico
+# ===============================================
+
+# Archivos de CV subidos por usuarios
+uploads/
+resumes/
+*.pdf
+*.doc
+*.docx
+
+# Logs que pueden contener información sensible
+logs/
+*.log
+*.log.*
+
+# Configuraciones locales con API keys
+config.local.json
+secrets.json
+credentials.json
+
+# Ollama models (muy grandes, se descargan automáticamente)
+models/
+*.gguf
+*.bin
+
+# Docker volumes y datos persistentes
+docker-data/
+volume-data/
+.docker/
+
+# Backups de base de datos
+backup/
+backups/
+*.sql
+*.dump
+
+# Archivos temporales del sistema
+tmp/
+temp/
+.tmp/
 
 # cursor related files
 .cursor/
