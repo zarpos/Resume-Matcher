@@ -88,16 +88,64 @@ class ScoreImprovementService:
             if not found_keywords:
                 found_keywords = ["General Skills", "Experience", "Education"]
 
+            # Create properly structured data that matches the validation schemas
+            personal_data = {
+                "firstName": "Candidate",
+                "lastName": "Name",
+                "email": "candidate@email.com",
+                "phone": "000-000-0000",
+                "linkedin": "",
+                "portfolio": "",
+                "location": {
+                    "city": "City",
+                    "country": "Country"
+                }
+            }
+
+            experiences = [{
+                "jobTitle": "Previous Role",
+                "company": "Previous Company",
+                "location": "City, Country",  # This needs to be a string, not an object
+                "startDate": "2020-01-01",
+                "endDate": "2023-12-31",
+                "description": ["Professional experience"],
+                "technologiesUsed": found_keywords[:5] if found_keywords else ["Technology"]
+            }]
+
+            projects = [{
+                "projectName": "Sample Project",
+                "description": "Project description",
+                "technologiesUsed": found_keywords[:3] if found_keywords else ["Technology"],
+                "link": "",
+                "startDate": "2023-01-01",
+                "endDate": "2023-12-31"
+            }]
+
+            skills = [{"category": "Technical", "skillName": kw} for kw in found_keywords[:10]]
+            if not skills:
+                skills = [{"category": "General", "skillName": "General Skills"}]
+
+            research_work = []
+            achievements = []
+            education = [{
+                "institution": "Educational Institution",
+                "degree": "Degree",
+                "fieldOfStudy": "Field of Study",
+                "startDate": "2016-09-01",
+                "endDate": "2020-06-01",
+                "gpa": ""
+            }]
+
             minimal_processed = ProcessedResume(
                 resume_id=resume_id,
-                personal_data=json.dumps({"name": "Candidate", "email": "candidate@email.com"}),
-                experiences=json.dumps({"experiences": []}),
-                projects=json.dumps({"projects": []}),
-                skills=json.dumps({"skills": found_keywords}),
-                research_work=json.dumps({"research_work": []}),
-                achievements=json.dumps({"achievements": []}),
-                education=json.dumps({"education": []}),
-                extracted_keywords=json.dumps({"extracted_keywords": found_keywords})
+                personal_data=json.dumps(personal_data),
+                experiences=json.dumps(experiences),
+                projects=json.dumps(projects),
+                skills=json.dumps(skills),
+                research_work=json.dumps(research_work),
+                achievements=json.dumps(achievements),
+                education=json.dumps(education),
+                extracted_keywords=json.dumps(found_keywords)
             )
 
             self.db.add(minimal_processed)

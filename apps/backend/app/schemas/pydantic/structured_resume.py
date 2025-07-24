@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field
 
 
 class Location(BaseModel):
-    city: str
-    country: str
+    city: Optional[str] = "Unknown City"
+    country: Optional[str] = "Unknown Country"
 
 
 class PersonalData(BaseModel):
@@ -18,29 +18,29 @@ class PersonalData(BaseModel):
 
 
 class Experience(BaseModel):
-    job_title: str = Field(..., alias="jobTitle")
-    company: str
-    location: str
-    start_date: str = Field(..., alias="startDate")
-    end_date: str = Field(..., alias="endDate")
-    description: List[str]
+    job_title: Optional[str] = Field("Unknown Position", alias="jobTitle")
+    company: Optional[str] = "Unknown Company"
+    location: Optional[str] = "Unknown Location"
+    start_date: Optional[str] = Field("Unknown", alias="startDate")
+    end_date: Optional[str] = Field("Unknown", alias="endDate")
+    description: List[str] = Field(default_factory=list)
     technologies_used: Optional[List[str]] = Field(
         default_factory=list, alias="technologiesUsed"
     )
 
 
 class Project(BaseModel):
-    project_name: str = Field(..., alias="projectName")
-    description: str
-    technologies_used: List[str] = Field(..., alias="technologiesUsed")
+    project_name: Optional[str] = Field("Unknown Project", alias="projectName")
+    description: Optional[str] = "Unknown Description"
+    technologies_used: List[str] = Field(default_factory=list, alias="technologiesUsed")
     link: Optional[str] = None
     start_date: Optional[str] = Field(None, alias="startDate")
     end_date: Optional[str] = Field(None, alias="endDate")
 
 
 class Skill(BaseModel):
-    category: str
-    skill_name: str = Field(..., alias="skillName")
+    category: Optional[str] = "General"
+    skill_name: Optional[str] = Field("Unknown Skill", alias="skillName")
 
 
 class ResearchWork(BaseModel):
@@ -52,11 +52,11 @@ class ResearchWork(BaseModel):
 
 
 class Education(BaseModel):
-    institution: str
-    degree: str
+    institution: Optional[str] = "Unknown Institution"
+    degree: Optional[str] = "Unknown Degree"
     field_of_study: Optional[str] = Field(None, alias="fieldOfStudy")
-    start_date: str = Field(..., alias="startDate")
-    end_date: str = Field(..., alias="endDate")
+    start_date: Optional[str] = Field("Unknown", alias="startDate")
+    end_date: Optional[str] = Field("Unknown", alias="endDate")
     grade: Optional[str] = None
     description: Optional[str] = None
 
